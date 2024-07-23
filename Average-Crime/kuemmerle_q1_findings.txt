@@ -1,0 +1,8 @@
+Findings Q1:
+- there is a peak of average crime in the summer months (May-August) with the highest crime rate in July, 
+one possible explanation could be longer days and warmer weather leading to more people spending time in the streets
+and being possible victims of a crime. Also, in summer more tourists come to Chicago, so the number of pickpocket crimes might go up.
+- interestingly, in February there are significantly less average crimes reported
+ even if we account for the fewer number of days in this month.
+ - These findings can be used to allocate more resources to protect citizens during the summer months while 
+ cutting costs with less resources during the winter.
