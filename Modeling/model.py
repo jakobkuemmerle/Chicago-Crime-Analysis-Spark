@@ -56,3 +56,55 @@ def load_fs_data(spark):
                  .withColumn("FoodStamps", split(col("temp_col"), " ").getItem(1).cast("int")) \
                  .drop("temp_col")
     return fs_df
+
+def merge_extra_data(pop_df, race_df, fs_df):
+    """Merge population, race, and food stamp data on the column 'Beat'."""
+    merged_df = pop_df.join(race_df, on="Beat").join(fs_df, on="Beat")
+    merged_df = merged_df.withColumn("food_stamp_perc", col("FoodStamps") / col("Population") * 100)
+    merged_df = merged_df.drop("Population").drop("Area")
+    return merged_df
+
+DATE_FORMAT = 'MM/dd/yyyy hh:mm:ss a'
+
+# List of violent and non-violent crimes
+VIOLENT_CRIMES = [
+    "OFFENSE INVOLVING CHILDREN", "PUBLIC PEACE VIOLATION", "ARSON", "ASSAULT", "BATTERY", "ROBBERY",
+    "HUMAN TRAFFICKING", "SEX OFFENSE", "CRIMINAL DAMAGE", "KIDNAPPING", "INTERFERENCE WITH PUBLIC OFFICER"
+]
+
+NON_VIOLENT_CRIMES = [
+    "OBSCENITY", "OTHER OFFENSE", "GAMBLING", "CRIMINAL TRESPASS", "LIQUOR LAW VIOLATION",
+    "PUBLIC INDECENCY", "INTIMIDATION", "PROSTITUTION", "DECEPTIVE PRACTICE",
+    "CONCEALED CARRY LICENSE VIOLATION", "NARCOTICS", "NON-CRIMINAL", "WEAPONS VIOLATION",
+    "OTHER NARCOTIC VIOLATION"
+]
+
+def feature_engineering(crime_df, iucr_df):
+    """Perform feature engineering on the data."""
+    joined_df = crime_df.join(iucr_df, crime_df.IUCR == iucr_df.IUCR_other, 'inner')
+    joined_df = joined_df.withColumn("week_of_year", weekofyear(col("Date")))
+    joined_df = joined_df.withColumn("year", year(col("Date")))
+
+    indexer = StringIndexer(inputCol="Beat", outputCol="BeatIndex")
+    joined_df = indexer.fit(joined_df).transform(joined_df)
+
+    joined_df = joined_df.withColumn("violent_crime", when(col("PRIMARY DESCRIPTION").isin(VIOLENT_CRIMES), 1).otherwise(0))
+    joined_df = joined_df.withColumn("non_violent_crime", when(col("PRIMARY DESCRIPTION").isin(NON_VIOLENT_CRIMES), 1).otherwise(0))
+    joined_df = joined_df.withColumn("Arrest", when(col("Arrest") == True, 1).otherwise(0))
+    joined_df = joined_df.withColumn("Domestic", when(col("Domestic") == True, 1).otherwise(0))
+    return joined_df
+
+if __name__ == "__main__":
+    # Start Spark session
+    spark = initialize_spark_session()
+    
+    # Load datasets
+    crime_df = load_crime_data(spark)
+    iucr_df = load_iucr_data(spark)
+    pop_df = load_pop_data(spark)
+    race_df = load_race_data(spark)
+    race_df.show()
+    fs_df = load_fs_data(spark)
+
+    # Perform feature engineering
+    feature_engineered_df = feature_engineering(crime_df, iucr_df)
