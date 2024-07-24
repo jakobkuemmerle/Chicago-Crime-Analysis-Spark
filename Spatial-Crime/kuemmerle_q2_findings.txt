@@ -1,0 +1,23 @@
+Findings a)
+The top 10 blocks in crime events in the last 3 years are as follows:
+('001XX N STATE ST', 2293)
+('008XX N MICHIGAN AVE', 1072)
+('0000X W TERMINAL ST', 948)
+('0000X N STATE ST', 937)
+('0000X S STATE ST', 899)
+('011XX S CANAL ST', 756)
+('100XX W OHARE ST', 685)
+('006XX N MICHIGAN AVE', 667)
+('064XX S DR MARTIN LUTHER KING JR DR', 573)
+('076XX S CICERO AVE', 572)
+
+Findings b)
+Based on the map we can identify the beats '1931' and '1933' to be the highest correlating adjustent beats.
+They have a correlation of 0.999919916834701.
+This information is essential in understanding how crime is dependend on neighborhood effects.
+
+Findings c)
+With a Chi-Squared of 0.35749999669028343 we can show that the mayors have no significant impact on crime in Chicago.
+Other factors seem to prevail. One explanation is that politics take a ranger time to have an impact on society and also on crime.
+A policy of a mayor might only be measurable years later when the mayor has already resigned. Furthermore, federal and state legislature
+might play a bigger role than the decision of the mayor and the mayor is not deciding alone.
