@@ -114,6 +114,43 @@ def feature_engineering(crime_df, iucr_df):
     joined_df = joined_df.withColumn("Domestic", when(col("Domestic") == True, 1).otherwise(0))
     return joined_df
 
+def aggregate_data(joined_df):
+    """Aggregate crime data by beat, year, and week of the year."""
+    aggregated_df = joined_df.groupBy("Beat", "BeatIndex", "year", "week_of_year") \
+        .agg(
+            sql_sum(when(col("violent_crime") == lit(1), 1)).alias("total_violent_crimes"),
+            sql_sum(when(col("non_violent_crime") == lit(1), 1)).alias("total_non_violent_crimes"),
+            sql_sum(col("Arrest")).alias("total_arrests"),
+            sql_sum(col("Domestic")).alias("total_domestic_crimes"),
+            countDistinct("District").alias("num_districts"),
+            countDistinct("Ward").alias("num_wards"),
+            countDistinct("Community Area").alias("num_community_areas"),
+            countDistinct("Location Description").alias("num_location_descriptions")
+        )
+    aggregated_df = aggregated_df.withColumn("total_crimes", col("total_violent_crimes") + col("total_non_violent_crimes"))
+
+    # Create lagged features
+    window_spec = Window.partitionBy('Beat').orderBy('year', 'week_of_year')
+    for num_weeks_lag in [1, 2, 3, 4]:
+        aggregated_df = aggregated_df.withColumn(f'total_crimes_lag_{num_weeks_lag}', lag('total_crimes', num_weeks_lag).over(window_spec))
+        aggregated_df = aggregated_df.withColumn(f'total_arrests_lag_{num_weeks_lag}', lag('total_arrests', num_weeks_lag).over(window_spec))
+        aggregated_df = aggregated_df.withColumn(f'total_domestic_crimes_lag_{num_weeks_lag}', lag('total_domestic_crimes', num_weeks_lag).over(window_spec))
+
+    # Fill missing values with 0
+    aggregated_df = aggregated_df.na.fill(0)
+
+    return aggregated_df
+
+def merge_extra_and_crime(aggregated_df, merged_df):
+    """Merge aggregated crime data with extra data on column 'Beat'."""
+    final_df = aggregated_df.join(merged_df, on="Beat", how="inner")
+    return final_df
+
+def count_nulls_per_column(df):
+    """Count the number of null values per column in a DataFrame."""
+    null_counts = [df.where(col(c).isNull()).count() for c in df.columns]
+    return dict(zip(df.columns, null_counts))
+
 if __name__ == "__main__":
     # Start Spark session
     spark = initialize_spark_session()
@@ -128,3 +165,12 @@ if __name__ == "__main__":
 
     # Perform feature engineering
     feature_engineered_df = feature_engineering(crime_df, iucr_df)
+    
+    # Aggregate data
+    aggregated_df = aggregate_data(feature_engineered_df)
+
+    aggregated_df.show()
+
+    # Merge extra data
+    merged_df = merge_extra_data(pop_df, race_df, fs_df)
+    merged_df.show()
