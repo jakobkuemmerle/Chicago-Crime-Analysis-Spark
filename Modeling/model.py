@@ -206,3 +206,21 @@ if __name__ == "__main__":
     # Persist datasets
     training_data.persist()
     test_data.persist()
+
+    # Train models and evaluate performance
+    with open('kuemmerle_q3.txt', 'w') as result_file:
+        for name, pipeline in pipelines:
+            model = pipeline.fit(training_data)
+            predictions = model.transform(test_data)
+            
+            # Evaluate model performance
+            evaluator = RegressionEvaluator(labelCol="total_crimes", predictionCol="prediction")
+            rmse = evaluator.setMetricName("rmse").evaluate(predictions)
+            r2 = evaluator.setMetricName("r2").evaluate(predictions)
+            mae = evaluator.setMetricName("mae").evaluate(predictions)
+            
+            # Write model performance to file
+            result_file.write(f"{name}:\n")
+            result_file.write(f"RMSE: {rmse}\n")
+            result_file.write(f"R-squared: {r2}\n")
+            result_file.write(f"Mean Absolute Error (as proxy for MAPE): {mae}\n\n")
