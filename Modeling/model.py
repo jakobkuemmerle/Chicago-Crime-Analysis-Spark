@@ -155,3 +155,8 @@ if __name__ == "__main__":
 
     # Perform feature engineering
     feature_engineered_df = feature_engineering(crime_df, iucr_df)
+    
+    # Aggregate data
+    aggregated_df = aggregate_data(feature_engineered_df)
+
+    aggregated_df.show()
