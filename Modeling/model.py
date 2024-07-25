@@ -174,3 +174,35 @@ if __name__ == "__main__":
     # Merge extra data
     merged_df = merge_extra_data(pop_df, race_df, fs_df)
     merged_df.show()
+
+    # Define features for training
+    TRAINING_FEATURES = [
+        'BeatIndex', 'year', 'week_of_year', 'num_districts', 'num_wards', 'num_community_areas', 'num_location_descriptions',
+        'total_crimes_lag_1', 'total_arrests_lag_1', 'total_domestic_crimes_lag_1',
+        'total_crimes_lag_2', 'total_arrests_lag_2', 'total_domestic_crimes_lag_2',
+        'total_crimes_lag_3', 'total_arrests_lag_3', 'total_domestic_crimes_lag_3',
+        'total_crimes_lag_4', 'total_arrests_lag_4', 'total_domestic_crimes_lag_4',
+        'population_density', 'White', 'Hispanic', 'Black', 'Asian', 'Mixed', 'Other', 'food_stamp_perc'
+    ]
+    
+    # Assemble features into a feature vector
+    # assembler = VectorAssembler(inputCols=TRAINING_FEATURES, outputCol="features")
+    assembler = VectorAssembler(inputCols=TRAINING_FEATURES, outputCol="features", handleInvalid="keep")
+
+    
+    # Define regression models
+    models = [
+        ("RandomForest", RandomForestRegressor(labelCol="total_crimes", featuresCol="features")),
+        ("GradientBoostedTree", GBTRegressor(labelCol="total_crimes", featuresCol="features")),
+        ("LinearRegression", LinearRegression(labelCol="total_crimes", featuresCol="features"))
+    ]
+    
+    # Create pipelines for models
+    pipelines = [(name, Pipeline(stages=[assembler, model])) for name, model in models]
+    
+    # Split data into training and test sets
+    training_data, test_data = final_df.randomSplit([0.8, 0.2], seed=1234)
+    
+    # Persist datasets
+    training_data.persist()
+    test_data.persist()
