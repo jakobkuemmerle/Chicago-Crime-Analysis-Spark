@@ -79,6 +79,26 @@ NON_VIOLENT_CRIMES = [
     "OTHER NARCOTIC VIOLATION"
 ]
 
+def initialize_spark_session():
+    """Initialize Spark session."""
+    spark = SparkSession.builder.appName(APP_NAME).getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
+    return spark
+
+def load_crime_data(spark):
+    """Load crime data from CSV file."""
+    crime_df = spark.read.csv(CRIMES_CSV_PATH, header=True)
+    crime_df = crime_df.withColumn("Date", to_date(col("Date"), DATE_FORMAT))
+    crime_df = crime_df.withColumn("Beat", col("Beat").cast("integer"))
+
+    return crime_df
+
+def load_iucr_data(spark):
+    """Load IUCR data from CSV file."""
+    iucr_df = spark.read.csv(IUCR_CSV_PATH, header=True)
+    iucr_df = iucr_df.withColumnRenamed("IUCR", "IUCR_other")
+    return iucr_df
+
 def feature_engineering(crime_df, iucr_df):
     """Perform feature engineering on the data."""
     joined_df = crime_df.join(iucr_df, crime_df.IUCR == iucr_df.IUCR_other, 'inner')
