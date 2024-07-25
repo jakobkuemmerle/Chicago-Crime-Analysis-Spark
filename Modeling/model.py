@@ -141,6 +141,16 @@ def aggregate_data(joined_df):
 
     return aggregated_df
 
+def merge_extra_and_crime(aggregated_df, merged_df):
+    """Merge aggregated crime data with extra data on column 'Beat'."""
+    final_df = aggregated_df.join(merged_df, on="Beat", how="inner")
+    return final_df
+
+def count_nulls_per_column(df):
+    """Count the number of null values per column in a DataFrame."""
+    null_counts = [df.where(col(c).isNull()).count() for c in df.columns]
+    return dict(zip(df.columns, null_counts))
+
 if __name__ == "__main__":
     # Start Spark session
     spark = initialize_spark_session()
@@ -160,3 +170,7 @@ if __name__ == "__main__":
     aggregated_df = aggregate_data(feature_engineered_df)
 
     aggregated_df.show()
+
+    # Merge extra data
+    merged_df = merge_extra_data(pop_df, race_df, fs_df)
+    merged_df.show()
