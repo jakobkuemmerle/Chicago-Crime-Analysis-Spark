@@ -26,6 +26,12 @@ def filter_and_group(data_frame, column):
     arrests_data = data_frame.filter(data_frame['Arrest'] == 'true')
     return arrests_data.groupBy(column).count().orderBy(column)
 
+def plot_data(data_frame, x_column, y_column, title, ax):
+    """Plot data on the given axis."""
+    data_frame.plot(kind='bar', x=x_column, y=y_column, ax=ax, title=title)
+    ax.set_xlabel(x_column)
+    ax.set_ylabel(y_column)
+
 def main():
     # Load and process the crime data
     crime_data_path = "hdfs://wolf:9000/user/uhw4967/crime_data/Crimes_-_2001_to_present.csv"
@@ -41,6 +47,12 @@ def main():
     hourly_data_pd = hourly_data.toPandas()
     weekly_data_pd = weekly_data.toPandas()
     monthly_data_pd = monthly_data.toPandas()
+
+    # Plot and save all plots in a single PNG file
+    fig, axs = plt.subplots(3, 1, figsize=(10, 15))
+    plot_data(hourly_data_pd, 'Hour', 'count', 'Hourly Arrests', axs[0])
+    plot_data(weekly_data_pd, 'DayOfWeek', 'count', 'Weekly Arrests', axs[1])
+    plot_data(monthly_data_pd, 'Month', 'count', 'Monthly Arrests', axs[2])
 
 
 if __name__ == "__main__":
