@@ -1,0 +1,14 @@
+RandomForest:
+RMSE: 4.232124695149632
+R-squared: 0.6816951673522071
+Mean Absolute Error (as proxy for MAPE): 2.988117384154086
+
+GradientBoostedTree:
+RMSE: 3.9964529562581506
+R-squared: 0.7161586053788265
+Mean Absolute Error (as proxy for MAPE): 2.836170987343583
+
+LinearRegression:
+RMSE: 4.0443525193067345
+R-squared: 0.7093138579194092
+Mean Absolute Error (as proxy for MAPE): 2.8751881900419547
