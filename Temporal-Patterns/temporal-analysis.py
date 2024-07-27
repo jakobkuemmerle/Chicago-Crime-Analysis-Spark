@@ -15,10 +15,17 @@ def load_data(file_path):
     data = sql_context.read.format("csv").option("header", "true").load(file_path)
     return data.withColumn('Timestamp', to_timestamp('Date', 'MM/dd/yyyy hh:mm:ss a'))
 
+def process_data(crime_data):
+    """Extract hour, day of the week, and month from the timestamp."""
+    crime_data = crime_data.withColumn('Hour', hour(crime_data['Timestamp']))
+    crime_data = crime_data.withColumn('DayOfWeek', dayofweek(crime_data['Timestamp']))
+    return crime_data.withColumn('Month', month(crime_data['Timestamp']))
+
 def main():
     # Load and process the crime data
     crime_data_path = "hdfs://wolf:9000/user/uhw4967/crime_data/Crimes_-_2001_to_present.csv"
     crime_data = load_data(crime_data_path)
+    processed_data = process_data(crime_data)
 
 
 if __name__ == "__main__":
