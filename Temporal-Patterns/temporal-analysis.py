@@ -64,10 +64,10 @@ def main():
     plot_data(weekly_data_pd, 'DayOfWeek', 'count', 'Weekly Arrests', axs[1])
     plot_data(monthly_data_pd, 'Month', 'count', 'Monthly Arrests', axs[2])
     plt.tight_layout()
-    plt.savefig('kuemmerle_q4.png')
+    plt.savefig('time-analysis-result.png')
     
     # Save combined data to a single text file
-    save_combined_data(hourly_data_pd, weekly_data_pd, monthly_data_pd, 'kuemmerle_q4.txt')
+    save_combined_data(hourly_data_pd, weekly_data_pd, monthly_data_pd, 'combined-data.txt')
 
 
 if __name__ == "__main__":
