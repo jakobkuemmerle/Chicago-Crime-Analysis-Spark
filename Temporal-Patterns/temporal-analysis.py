@@ -32,6 +32,16 @@ def plot_data(data_frame, x_column, y_column, title, ax):
     ax.set_xlabel(x_column)
     ax.set_ylabel(y_column)
 
+def save_combined_data(hourly_df, weekly_df, monthly_df, file_name):
+    """Save combined data to a single text file."""
+    with open(file_name, 'w') as f:
+        f.write("Hourly Arrests\n")
+        f.write(hourly_df.to_string(index=False))
+        f.write("\n\nWeekly Arrests\n")
+        f.write(weekly_df.to_string(index=False))
+        f.write("\n\nMonthly Arrests\n")
+        f.write(monthly_df.to_string(index=False))
+
 def main():
     # Load and process the crime data
     crime_data_path = "hdfs://wolf:9000/user/uhw4967/crime_data/Crimes_-_2001_to_present.csv"
@@ -53,6 +63,11 @@ def main():
     plot_data(hourly_data_pd, 'Hour', 'count', 'Hourly Arrests', axs[0])
     plot_data(weekly_data_pd, 'DayOfWeek', 'count', 'Weekly Arrests', axs[1])
     plot_data(monthly_data_pd, 'Month', 'count', 'Monthly Arrests', axs[2])
+    plt.tight_layout()
+    plt.savefig('kuemmerle_q4.png')
+    
+    # Save combined data to a single text file
+    save_combined_data(hourly_data_pd, weekly_data_pd, monthly_data_pd, 'kuemmerle_q4.txt')
 
 
 if __name__ == "__main__":
