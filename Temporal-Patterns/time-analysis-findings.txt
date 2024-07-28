@@ -1,0 +1,16 @@
+Findings Q4:
+
+Hourly Arrests:
+The data shows variations in the number of arrests throughout the day.
+The hours with the highest number of arrests are in the evening and nighttime, particularly between 6 PM and 10 PM, with a peak at 8 PM.
+The hours with the lowest number of arrests are in the early morning, particularly between 4 AM and 6 AM.
+
+Weekly Arrests:
+The data indicates fluctuations in the number of arrests across different days of the week.
+The day with the highest number of arrests is Saturday, followed closely by Friday.
+The day with the lowest number of arrests is Monday, indicating a decrease in criminal activity at the beginning of the week.
+
+Monthly Arrests:
+The data shows variations in the number of arrests across different months of the year.
+The months with the highest number of arrests are typically in the warmer months, particularly in the summer and early fall (June to September).
+The months with the lowest number of arrests are typically in the colder months, particularly in the winter (December to February).
