@@ -3,9 +3,13 @@
 ## Goal
 Analysis Data on Crime in Chicago since 2001. The Analysis is done in Spark.
 
-## 1. investiage Average Chrime throughout history
+## 1. Investiage Average Crime
 
 ## 2. Analyze spatial Crime differences and highlight hotspots
+
+## 3. Initial Model to predict crime occurances
+
+## 4. Identify temporal patterns of crime
 
 ## Bias/Fairness Analysis DATA
 
